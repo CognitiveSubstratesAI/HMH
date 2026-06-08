@@ -4,7 +4,7 @@
 # negative control actually exercises degradation (else it's measuring only the easy regime —
 # the E3 anti-gaming lesson from Step-4). Honest-failure: if a REALISTIC episode (k_slot≈10-15,
 # k_rel≈5) doesn't recover at feasible D, STOP and report — do not patch.
-using FactorVSA, Random, Printf
+using FactorVSA, HMH, Random, Printf   # episode_recovery_rate lives in HMH now
 
 Random.seed!(20260606)
 
