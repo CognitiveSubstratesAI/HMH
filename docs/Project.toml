@@ -1,6 +1,13 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+FactorVSA = "fac70a5a-0000-4000-8000-000000000001"
 HMH = "fac70b00-0000-4000-8000-000000000002"
+
+[sources]
+# FactorVSA must be a DIRECT docs dep (the guide's `@example` blocks do `using FactorVSA`).
+# Path is relative to this file (packages/HMH/docs/); ../../FactorVSA = the sibling checkout
+# both locally and in CI (where it's cloned to ../FactorVSA next to the HMH checkout).
+FactorVSA = {path = "../../FactorVSA"}
 
 [compat]
 Documenter = "1"
