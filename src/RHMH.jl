@@ -18,16 +18,16 @@
 export RoleBook, role!, Episode, encode_episode, recover_slot, complete_slot, consolidate
 export episode_recovery_rate
 
-"A registry of named role atoms (deterministic per name once created; seed externally)."
+"A registry of named role atoms — content-seeded, so the same name yields the same vector across processes."
 mutable struct RoleBook
     dim::Int
     atoms::Dict{Symbol, HV{BipolarMAP}}
 end
 RoleBook(dim::Int) = RoleBook(dim, Dict{Symbol, HV{BipolarMAP}}())
 
-"Get (or lazily create) the role atom named `name`."
+"Get (or lazily create) the role atom named `name` — content-seeded (reproducible across processes)."
 role!(rb::RoleBook, name::Symbol) =
-    get!(() -> random_hv(BipolarMAP, rb.dim), rb.atoms, name)
+    get!(() -> content_hv(name, rb.dim), rb.atoms, name)
 
 # module-marker role name for a slot's ontology type (m_τ in Eq 69)
 _mtype(t::Symbol) = Symbol("mtype_", t)

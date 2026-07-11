@@ -6,6 +6,16 @@ using HMH                # R-HMH (§8) + ColBaC-HDC (§9) application layers
 
 @testset "HMH" begin
 
+    @testset "R-HMH — roles CONTENT-seeded (cross-process reproducible; regression)" begin
+        # Two INDEPENDENT RoleBooks stand in for two processes. Pre-fix, role! drew from the global
+        # RNG in first-touch order, so these were unequal — encode in one process, decode in another
+        # → garbage. Content-seeding makes name → vector a pure function. This gate FAILED before the fix.
+        D = 8192
+        rb1 = RoleBook(D); rb2 = RoleBook(D)
+        @test role!(rb1, :actor).data == role!(rb2, :actor).data     # same name → same vector, cross-instance
+        @test role!(rb1, :actor).data != role!(rb1, :patient).data   # distinct names → distinct vectors
+    end
+
     @testset "R-HMH — episode encode + resonant recall (§8, 5a/5b)" begin
         Random.seed!(20260606)
         D = 4096
