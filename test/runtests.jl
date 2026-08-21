@@ -100,4 +100,37 @@ using HMH                # R-HMH (§8) + ColBaC-HDC (§9) application layers
     end
 end
 
+@testset "§8.6 admissibility gate — the R-HMH go/no-go, WIRED" begin
+    # 🔴 THIS GATE EXISTED AND NOTHING RAN IT. `bench/step5_gate.jl` is the R-HMH episodic
+    # admissibility oracle — its own header calls it the "Go/no-go for building 5c/5d" — and
+    # `hmh_context_gating_spec.md` §7 CITES IT AS EVIDENCE. It was referenced by neither this suite
+    # nor any script. Measured 2026-08-21: it PASSES, and that result had been invisible.
+    #
+    # That is the shape the port-inventory ratchet records for `cmp_pure.jl`: a real measurement
+    # sitting beside an unwired harness — "knowledge that nothing executes changes nothing".
+    # [[feedback_verify_the_oracle_runs]] · [[feedback_enforcement_works_prose_memory_does_not]]
+    #
+    # ⚠️ THE NEGATIVE CONTROL IS THE LOAD-BEARING HALF, not the recovery number. Its header says the
+    # sweep "must PUSH PAST that boundary so its negative control actually exercises degradation
+    # (else it's measuring only the easy regime — the E3 anti-gaming lesson from Step-4)". A gate
+    # whose control does not collapse is measuring nothing, however green it reads.
+    #
+    # Trials are reduced from the bench's 80 to keep the suite fast; the full sweep stays in
+    # bench/step5_gate.jl. Seeded, so this is deterministic rather than flaky-by-design.
+    Random.seed!(20260606)
+
+    # A REALISTIC episode (k_slot=10, k_rel=5, M=16) must recover at a FEASIBLE dimension.
+    # Bench measured 0.989 at D=512 and 1.000 at D>=1024; HMHStore's default D is 1024.
+    r_1024 = episode_recovery_rate(1024, 10, 5, 16; trials=40)
+    @test r_1024 >= 0.95
+
+    # THE NEGATIVE CONTROL: push past the D/(2 ln M) capacity bound and recovery MUST collapse.
+    # Bench at D=512, M=64: 0.997 (k_slot=8) -> 0.136 (k_slot=256).
+    easy = episode_recovery_rate(512, 8,   0, 64; trials=40)
+    hard = episode_recovery_rate(512, 256, 0, 64; trials=40)
+    @test easy > 0.9                     # the easy regime really is easy…
+    @test hard < 0.4                     # …and the overloaded one really does degrade
+    @test easy - hard > 0.5              # ⇐ the anti-gaming assertion: the gate discriminates
+end
+
 println("HMH tests passed ✓")
