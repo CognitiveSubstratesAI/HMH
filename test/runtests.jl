@@ -11,7 +11,8 @@ using HMH                # R-HMH (§8) + ColBaC-HDC (§9) application layers
         # RNG in first-touch order, so these were unequal — encode in one process, decode in another
         # → garbage. Content-seeding makes name → vector a pure function. This gate FAILED before the fix.
         D = 8192
-        rb1 = RoleBook(D); rb2 = RoleBook(D)
+        rb1 = RoleBook(D)
+        rb2 = RoleBook(D)
         @test role!(rb1, :actor).data == role!(rb2, :actor).data     # same name → same vector, cross-instance
         @test role!(rb1, :actor).data != role!(rb1, :patient).data   # distinct names → distinct vectors
     end
@@ -126,7 +127,7 @@ end
 
     # THE NEGATIVE CONTROL: push past the D/(2 ln M) capacity bound and recovery MUST collapse.
     # Bench at D=512, M=64: 0.997 (k_slot=8) -> 0.136 (k_slot=256).
-    easy = episode_recovery_rate(512, 8,   0, 64; trials=40)
+    easy = episode_recovery_rate(512, 8, 0, 64; trials=40)
     hard = episode_recovery_rate(512, 256, 0, 64; trials=40)
     @test easy > 0.9                     # the easy regime really is easy…
     @test hard < 0.4                     # …and the overloaded one really does degrade

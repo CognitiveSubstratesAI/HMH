@@ -19,7 +19,11 @@
 # NOTE (Revise limitation): editing a STRUCT's fields needs a fresh session; function-body edits
 # hot-reload in place. Editing the FactorVSA EXTENSION/ext files is not hot-reloaded either.
 
-try; using Revise; catch; @warn "Revise unavailable — install into the global env for hot-reload"; end
+try
+    using Revise
+catch
+    @warn "Revise unavailable — install into the global env for hot-reload"
+end
 
 using FactorVSA          # the resonator-VSA substrate HMH builds on (algebra/resonator/codebooks)
 using HMH                # R-HMH (§8) + ColBaC-HDC (§9)
