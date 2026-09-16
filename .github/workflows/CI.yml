@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ['1.12']
+        version: ['1.13', '1.12']
         os: [ubuntu-latest]
         arch: [x64]
     steps:
@@ -52,7 +52,7 @@ jobs:
           git clone --depth 1 https://github.com/CognitiveSubstratesAI/FactorVSA.git ../FactorVSA
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.12'
+          version: '1.13'
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
       # R-HMH's headline property: episodes are HDC-admissible at feasible D. Seeded,
@@ -74,7 +74,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.12'
+          version: '1.13'
       - name: Check formatting
         run: |
           julia -e 'using Pkg; Pkg.add(PackageSpec(name="JuliaFormatter", version="2.12.6"))'
